@@ -362,6 +362,8 @@ textarea {
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
   transition: transform var(--transition), border-color var(--transition),
     box-shadow var(--transition);
 }
@@ -393,6 +395,8 @@ textarea {
 .service-card p {
   color: var(--text-muted);
   font-size: 0.95rem;
+  flex-grow: 1;
+  margin-bottom: 1.35rem;
 }
 
 .service-num {
@@ -402,6 +406,151 @@ textarea {
   color: var(--green-bright);
   letter-spacing: 0.08em;
   margin-bottom: 0.75rem;
+}
+
+.btn-quote {
+  width: 100%;
+  margin-top: auto;
+  padding: 0.75rem 1rem;
+  font-size: 0.88rem;
+  background: transparent;
+  color: var(--green);
+  border: 1px solid var(--border-green);
+  box-shadow: 0 0 0 transparent;
+}
+
+.btn-quote:hover {
+  background: var(--green-soft);
+  color: #fff;
+  box-shadow: 0 0 24px rgba(0, 255, 136, 0.35);
+  transform: translateY(-2px);
+}
+
+/* ---------- Quote Modal ---------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  background: rgba(5, 8, 14, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-dialog {
+  width: min(460px, 100%);
+  padding: 2rem 1.75rem;
+  border-radius: 24px;
+  background: rgba(17, 24, 39, 0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  box-shadow: 0 0 50px rgba(0, 255, 136, 0.12), 0 25px 60px rgba(0, 0, 0, 0.5);
+  transform: translateY(24px) scale(0.96);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  max-height: calc(100vh - 2.5rem);
+  overflow-y: auto;
+}
+
+.modal-overlay.open .modal-dialog {
+  transform: translateY(0) scale(1);
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: var(--transition);
+}
+
+.modal-close:hover {
+  color: var(--green);
+  border-color: var(--border-green);
+  box-shadow: 0 0 16px rgba(0, 255, 136, 0.2);
+}
+
+.modal-dialog h2 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  margin-bottom: 0.35rem;
+  padding-right: 2.5rem;
+}
+
+.modal-dialog .modal-sub {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  margin-bottom: 1.5rem;
+}
+
+.modal-service-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  background: var(--green-soft);
+  border: 1px solid var(--border-green);
+  color: var(--green);
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+}
+
+.btn-loading {
+  position: relative;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.btn-loading .btn-text {
+  opacity: 0;
+}
+
+.btn-spinner {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-loading .btn-spinner {
+  display: flex;
+}
+
+.btn-spinner::after {
+  content: "";
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid rgba(4, 20, 12, 0.25);
+  border-top-color: #04140c;
+  animation: spin 0.7s linear infinite;
+}
+
+body.modal-open {
+  overflow: hidden;
 }
 
 /* ---------- Stats ---------- */

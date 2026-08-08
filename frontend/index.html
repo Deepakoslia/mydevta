@@ -171,36 +171,42 @@
           <div class="service-icon"><i data-lucide="megaphone" style="width:24px;height:24px"></i></div>
           <h3>Marketing & Branding</h3>
           <p>Build a powerful brand identity and digital presence that drives measurable growth.</p>
+          <button type="button" class="btn btn-quote" data-service="Marketing & Branding">Request Callback</button>
         </article>
         <article class="service-card reveal">
           <span class="service-num">02</span>
           <div class="service-icon"><i data-lucide="users-round" style="width:24px;height:24px"></i></div>
           <h3>HR Consulting</h3>
           <p>Recruitment, handbooks, statutory compliance, and performance systems tailored for you.</p>
+          <button type="button" class="btn btn-quote" data-service="HR Consulting">Request Callback</button>
         </article>
         <article class="service-card reveal">
           <span class="service-num">03</span>
           <div class="service-icon"><i data-lucide="trending-up" style="width:24px;height:24px"></i></div>
           <h3>Growth Consulting</h3>
           <p>Strategic advisory for MSMEs to streamline operations and scale sustainably.</p>
+          <button type="button" class="btn btn-quote" data-service="Growth Consulting">Request Callback</button>
         </article>
         <article class="service-card reveal">
           <span class="service-num">04</span>
           <div class="service-icon"><i data-lucide="calculator" style="width:24px;height:24px"></i></div>
           <h3>Accounting & Tax</h3>
           <p>GST, income tax, bookkeeping, and year-round statutory compliance support.</p>
+          <button type="button" class="btn btn-quote" data-service="Accounting & Tax">Request Callback</button>
         </article>
         <article class="service-card reveal">
           <span class="service-num">05</span>
           <div class="service-icon"><i data-lucide="building-2" style="width:24px;height:24px"></i></div>
           <h3>Startup & MCA Compliance</h3>
           <p>Incorporation, ROC filings, and MCA compliance managed end-to-end.</p>
+          <button type="button" class="btn btn-quote" data-service="Startup & MCA Compliance">Request Callback</button>
         </article>
         <article class="service-card reveal">
           <span class="service-num">06</span>
           <div class="service-icon"><i data-lucide="shield" style="width:24px;height:24px"></i></div>
           <h3>Insurance & Lending</h3>
           <p>Protect assets and secure capital with tailored insurance and lending products.</p>
+          <button type="button" class="btn btn-quote" data-service="Insurance & Lending">Request Callback</button>
         </article>
       </div>
       <div style="text-align:center;margin-top:2.5rem" class="reveal">
@@ -333,6 +339,45 @@
       </div>
     </div>
   </footer>
+
+  <!-- Request Callback Modal -->
+  <div class="modal-overlay" id="quoteModal" aria-hidden="true" role="dialog" aria-labelledby="quoteModalTitle">
+    <div class="modal-dialog" role="document">
+      <button type="button" class="modal-close" id="quoteModalClose" aria-label="Close">
+        <i data-lucide="x" style="width:18px;height:18px"></i>
+      </button>
+      <h2 id="quoteModalTitle">Request a Callback</h2>
+      <p class="modal-sub">Share your details and we’ll call you back shortly.</p>
+      <div class="modal-service-badge">
+        <i data-lucide="briefcase" style="width:14px;height:14px"></i>
+        <span id="quoteServiceLabel">Service</span>
+      </div>
+      <form id="quoteForm" novalidate>
+        <input type="hidden" name="service" id="quoteService" value="" />
+        <div class="form-honeypot" aria-hidden="true">
+          <label for="quoteWebsite">Website</label>
+          <input type="text" id="quoteWebsite" name="website" tabindex="-1" autocomplete="off" />
+        </div>
+        <div class="form-group">
+          <label for="quoteName">Full Name</label>
+          <input type="text" id="quoteName" name="name" required minlength="2" maxlength="100" placeholder="Your name" />
+        </div>
+        <div class="form-group">
+          <label for="quoteEmail">Email Address</label>
+          <input type="email" id="quoteEmail" name="email" required maxlength="150" placeholder="you@example.com" />
+        </div>
+        <div class="form-group">
+          <label for="quotePhone">Phone</label>
+          <input type="tel" id="quotePhone" name="phone" required minlength="10" maxlength="20" placeholder="+91 98765 43210" />
+        </div>
+        <button type="submit" class="btn btn-primary" id="quoteSubmit" style="width:100%">
+          <span class="btn-text">Request Callback</span>
+          <span class="btn-spinner" aria-hidden="true"></span>
+        </button>
+        <p id="quoteStatus" class="form-status" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
 
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <script src="../assets/js/main.js"></script>

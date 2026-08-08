@@ -124,10 +124,18 @@ define('DB_PASS', 'your_strong_password');
 - Sticky navbar, smooth scroll, loading animation  
 - SaaS glassmorphism dashboard hero with floating widgets & analytics bars  
 - Service cards with `scale(1.05)` + neon glow hover  
+- **Get Quote modal** per service → `service_requests` table (name, email, phone, service)  
 - Scroll reveal animations, button ripple + glow  
 - Contact form → MySQL (PDO prepared statements)  
-- Session-based admin login with bcrypt passwords + CSRF on delete  
+- Admin: Messages + Quotes dashboards with delete (CSRF)  
+- Session-based admin login with bcrypt passwords  
 - Responsive DEVTA logo with hover glow  
+
+### Import quote table (existing DB)
+
+If you already imported an older schema, also run:
+
+`database/service_requests.sql`
 
 ## Default Admin
 
