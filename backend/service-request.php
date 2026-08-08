@@ -73,6 +73,17 @@ try {
         ':service' => $service,
     ]);
 
+    // Email so you know WHICH service was requested
+    notify_admin(
+        'DEVTA Callback: ' . $service,
+        "New Request Callback\n\n"
+        . "Service : {$service}\n"
+        . "Name    : {$name}\n"
+        . "Email   : {$email}\n"
+        . "Phone   : {$phoneDigits}\n"
+        . "Time    : " . date('Y-m-d H:i:s') . "\n"
+    );
+
     json_response([
         'success' => true,
         'message' => 'Thank you! Your callback request has been submitted. We will contact you soon.',
@@ -80,6 +91,6 @@ try {
 } catch (Throwable $e) {
     json_response([
         'success' => false,
-        'message' => 'Server error. Please check database settings in backend/config.php.',
+        'message' => 'Database not connected. Open /install.php on Hostinger and set MySQL details. Error: ' . $e->getMessage(),
     ], 500);
 }

@@ -36,6 +36,11 @@ if (!defined('DB_SQLITE_PATH')) {
     );
 }
 
+// Callback / contact alerts go here
+if (!defined('NOTIFY_EMAIL')) {
+    define('NOTIFY_EMAIL', 'devtaknowledge@gmail.com');
+}
+
 ini_set('session.cookie_httponly', 1);
 ini_set('session.use_strict_mode', 1);
 ini_set('session.cookie_samesite', 'Strict');

@@ -51,6 +51,15 @@ try {
         ':message' => $message,
     ]);
 
+    notify_admin(
+        'DEVTA Contact Message',
+        "New Contact Message\n\n"
+        . "Name    : {$name}\n"
+        . "Email   : {$email}\n"
+        . "Message : {$message}\n"
+        . "Time    : " . date('Y-m-d H:i:s') . "\n"
+    );
+
     json_response([
         'success' => true,
         'message' => 'Thank you! Your message has been sent successfully.',
@@ -58,6 +67,6 @@ try {
 } catch (Throwable $e) {
     json_response([
         'success' => false,
-        'message' => 'Server error. Please check database settings in backend/config.php.',
+        'message' => 'Database not connected. Open /install.php on Hostinger and set MySQL details. Error: ' . $e->getMessage(),
     ], 500);
 }
