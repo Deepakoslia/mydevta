@@ -3,7 +3,7 @@ require_once __DIR__ . '/../backend/auth.php';
 requireLogin();
 
 $type = $_POST['type'] ?? 'contact';
-$redirect = ($type === 'service_request') ? 'quotes.php' : 'dashboard.php';
+$redirect = 'dashboard.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: ' . $redirect);
