@@ -112,10 +112,10 @@ function ensureSchema(PDO $pdo): void
 
     $count = (int) $pdo->query('SELECT COUNT(*) FROM users')->fetchColumn();
     if ($count === 0) {
-        // admin / Admin@123
-        $hash = '$2y$12$GQW1KvW.AarWMvCpfyyovecpAqRvS3i4YT.7dtsEkz9tgvJwtfQCC';
+        // Devtaknowledge / Nico@871
+        $hash = '$2y$12$ohLxHdUBwjKnnPkMqcGszeaW/McWB.fULTl1fr1JSJLe0MUGQgKLi';
         $stmt = $pdo->prepare('INSERT INTO users (username, password) VALUES (:u, :p)');
-        $stmt->execute([':u' => 'admin', ':p' => $hash]);
+        $stmt->execute([':u' => 'Devtaknowledge', ':p' => $hash]);
     }
 }
 

@@ -41,8 +41,8 @@ Yeh automatically:
 ## 5) Security
 1. **`install.php` delete** kar do
 2. Admin login: `https://yourdomain.com/admin/`
-   - Username: `admin`
-   - Password: `Admin@123`
+   - Username: `Devtaknowledge`
+   - Password: `Nico@871`
 3. Password jaldi change karo
 
 ## Data kahan dikhega?

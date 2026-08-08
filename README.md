@@ -56,8 +56,8 @@ define('DB_PASS', '');
 
 6. Open `http://localhost/Mydevta/` (or your virtual host).
 7. Admin: `http://localhost/Mydevta/admin/`  
-   - **Username:** `admin`  
-   - **Password:** `Admin@123`
+   - **Username:** `Devtaknowledge`
+   - **Password:** `Nico@871`
 
 ## Hostinger Shared Hosting Setup
 
@@ -69,7 +69,7 @@ Quick steps:
 3. Open `https://yourdomain.com/install.php` and paste DB details
 4. Test `https://yourdomain.com/backend/ping.php`
 5. Delete `install.php`
-6. Admin: `/admin/` → `admin` / `Admin@123`
+6. Admin: `/admin/` → `Devtaknowledge` / `Nico@871`
 
 ## Features
 
@@ -92,8 +92,8 @@ If you already imported an older schema, also run:
 ## Default Admin
 
 ```
-Username: admin
-Password: Admin@123
+Username: Devtaknowledge
+Password: Nico@871
 ```
 
 Generate a new hash anytime:

@@ -35,9 +35,8 @@ CREATE TABLE IF NOT EXISTS service_requests (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Default admin credentials:
---   Username: admin
---   Password: Admin@123
--- CHANGE THIS PASSWORD immediately after first login.
+--   Username: Devtaknowledge
+--   Password: Nico@871
 INSERT INTO users (username, password) VALUES
-('admin', '$2y$12$GQW1KvW.AarWMvCpfyyovecpAqRvS3i4YT.7dtsEkz9tgvJwtfQCC')
-ON DUPLICATE KEY UPDATE username = username;
+('Devtaknowledge', '$2y$12$ohLxHdUBwjKnnPkMqcGszeaW/McWB.fULTl1fr1JSJLe0MUGQgKLi')
+ON DUPLICATE KEY UPDATE password = VALUES(password);

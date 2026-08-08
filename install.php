@@ -67,12 +67,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     INDEX idx_created (created_at)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
 
-                $count = (int) $pdo->query('SELECT COUNT(*) FROM users')->fetchColumn();
-                if ($count === 0) {
-                    $hash = password_hash('Admin@123', PASSWORD_DEFAULT);
-                    $stmt = $pdo->prepare('INSERT INTO users (username, password) VALUES (:u, :p)');
-                    $stmt->execute([':u' => 'admin', ':p' => $hash]);
-                }
+                $hash = password_hash('Nico@871', PASSWORD_DEFAULT);
+                $stmt = $pdo->prepare(
+                    'INSERT INTO users (username, password) VALUES (:u, :p)
+                     ON DUPLICATE KEY UPDATE password = VALUES(password)'
+                );
+                $stmt->execute([':u' => 'Devtaknowledge', ':p' => $hash]);
+
+                // Remove old default admin if present
+                $pdo->prepare('DELETE FROM users WHERE username = :old AND username <> :new')
+                    ->execute([':old' => 'admin', ':new' => 'Devtaknowledge']);
 
                 // Write config.local.php
                 $exportPass = var_export($pass, true);
@@ -164,7 +168,7 @@ $prefill = [
         <a href="admin/">Admin Login</a>
         <a href="frontend/index.html">Website</a>
       </div>
-      <p style="margin-top:1rem">Admin: <b>admin</b> / <b>Admin@123</b></p>
+      <p style="margin-top:1rem">Admin: <b>Devtaknowledge</b> / <b>Nico@871</b></p>
     <?php endif; ?>
 
     <?php if ($error): ?>
