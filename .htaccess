@@ -3,7 +3,7 @@
 Options -Indexes
 
 # Protect backend config / auth from direct browser access
-<FilesMatch "^(config|auth)\.php$">
+<FilesMatch "^(config|config\.local|auth)\.php$">
   <IfModule mod_authz_core.c>
     Require all denied
   </IfModule>

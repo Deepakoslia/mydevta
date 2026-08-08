@@ -61,63 +61,15 @@ define('DB_PASS', '');
 
 ## Hostinger Shared Hosting Setup
 
-### 1. Upload files
+Full guide: **[HOSTINGER-SETUP.md](HOSTINGER-SETUP.md)**
 
-1. Log in to **hPanel → File Manager**.
-2. Open `public_html` (or your domain’s document root).
-3. Upload the entire project contents so the structure looks like:
-
-```
-public_html/
-  index.php
-  frontend/
-  backend/
-  admin/
-  assets/
-  database/
-  .htaccess
-```
-
-> Tip: Zip the project locally, upload the zip, then Extract in File Manager.
-
-### 2. Create MySQL database
-
-1. Go to **hPanel → Databases → MySQL Databases**.
-2. Create a database (e.g. `u123456789_mydevta`).
-3. Create a database user and password; assign the user **All Privileges** to that database.
-4. Note the full DB name, username, password, and host (usually `localhost`).
-
-### 3. Import schema
-
-1. Open **phpMyAdmin** from hPanel.
-2. Select your new database.
-3. Click **Import** → choose `database/schema.sql` → Go.
-
-### 4. Configure PHP
-
-Edit `backend/config.php` with Hostinger credentials:
-
-```php
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'u123456789_mydevta');  // your full DB name
-define('DB_USER', 'u123456789_admin');    // your DB user
-define('DB_PASS', 'your_strong_password');
-```
-
-### 5. Test
-
-| URL | Purpose |
-|-----|---------|
-| `https://yourdomain.com/` | Homepage |
-| `https://yourdomain.com/frontend/contact.html` | Contact form |
-| `https://yourdomain.com/admin/` | Admin login |
-
-### 6. Harden production
-
-1. Change the default admin password (update the `users` table with a new `password_hash()` value).
-2. Prefer HTTPS (Hostinger SSL is free via hPanel).
-3. Keep `backend/config.php` credentials private; do not commit real passwords to public repos.
-4. Optionally move `database/schema.sql` out of `public_html` after import.
+Quick steps:
+1. Upload full project to `public_html`
+2. hPanel → MySQL Databases → create DB + user
+3. Open `https://yourdomain.com/install.php` and paste DB details
+4. Test `https://yourdomain.com/backend/ping.php`
+5. Delete `install.php`
+6. Admin: `/admin/` → `admin` / `Admin@123`
 
 ## Features
 
