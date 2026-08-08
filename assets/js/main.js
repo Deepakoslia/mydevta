@@ -1,23 +1,55 @@
 /**
  * DEVTA — Frontend Interactions
- * Minimal, production-ready vanilla JS
+ * Hostinger-safe paths + Request Callback modal
  */
 
 (function () {
   "use strict";
 
-  /* ---------- Page Loader ---------- */
-  window.addEventListener("load", function () {
-    const loader = document.querySelector(".page-loader");
-    if (loader) {
-      setTimeout(function () {
-        loader.classList.add("hidden");
-      }, 400);
+  /** Resolve /backend/*.php from /frontend/*.html (also works in subfolders) */
+  function backendUrl(file) {
+    try {
+      var path = window.location.pathname || "/";
+      var dir = path.replace(/\/[^/]*$/, "/");
+      if (dir.indexOf("/frontend/") !== -1) {
+        dir = dir.replace(/\/frontend\/?$/, "/");
+      }
+      return dir + "backend/" + file;
+    } catch (e) {
+      return "../backend/" + file;
     }
+  }
+
+  async function postForm(url, formData) {
+    var res = await fetch(url, {
+      method: "POST",
+      body: formData,
+      headers: { Accept: "application/json" },
+      credentials: "same-origin",
+    });
+    var raw = await res.text();
+    try {
+      return JSON.parse(raw);
+    } catch (err) {
+      throw new Error(
+        "Server error (not JSON). Check backend/config.php MySQL settings & re-upload backend folder."
+      );
+    }
+  }
+
+  /* ---------- Page Loader ---------- */
+  function hideLoader() {
+    var loader = document.querySelector(".page-loader");
+    if (loader) loader.classList.add("hidden");
+  }
+  window.addEventListener("load", function () {
+    setTimeout(hideLoader, 300);
   });
+  // Fallback if some asset never finishes loading
+  setTimeout(hideLoader, 2500);
 
   /* ---------- Sticky Navbar ---------- */
-  const navbar = document.querySelector(".navbar");
+  var navbar = document.querySelector(".navbar");
   function onScroll() {
     if (!navbar) return;
     navbar.classList.toggle("scrolled", window.scrollY > 24);
@@ -26,8 +58,8 @@
   onScroll();
 
   /* ---------- Mobile Nav ---------- */
-  const toggle = document.querySelector(".nav-toggle");
-  const links = document.querySelector(".nav-links");
+  var toggle = document.querySelector(".nav-toggle");
+  var links = document.querySelector(".nav-links");
 
   if (toggle && links) {
     toggle.addEventListener("click", function () {
@@ -44,27 +76,27 @@
   }
 
   /* ---------- Button Ripple ---------- */
-  document.querySelectorAll(".btn").forEach(function (btn) {
-    btn.addEventListener("click", function (e) {
-      const rect = btn.getBoundingClientRect();
-      const ripple = document.createElement("span");
-      const size = Math.max(rect.width, rect.height);
-      ripple.className = "ripple";
-      ripple.style.width = ripple.style.height = size + "px";
-      ripple.style.left = e.clientX - rect.left - size / 2 + "px";
-      ripple.style.top = e.clientY - rect.top - size / 2 + "px";
-      btn.appendChild(ripple);
-      setTimeout(function () {
-        ripple.remove();
-      }, 600);
-    });
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest(".btn");
+    if (!btn || btn.classList.contains("btn-quote")) return;
+    var rect = btn.getBoundingClientRect();
+    var ripple = document.createElement("span");
+    var size = Math.max(rect.width, rect.height);
+    ripple.className = "ripple";
+    ripple.style.width = ripple.style.height = size + "px";
+    ripple.style.left = e.clientX - rect.left - size / 2 + "px";
+    ripple.style.top = e.clientY - rect.top - size / 2 + "px";
+    btn.appendChild(ripple);
+    setTimeout(function () {
+      ripple.remove();
+    }, 600);
   });
 
   /* ---------- Scroll Reveal ---------- */
-  const revealEls = document.querySelectorAll(".reveal, .reveal-left, .reveal-right");
+  var revealEls = document.querySelectorAll(".reveal, .reveal-left, .reveal-right");
 
   if ("IntersectionObserver" in window) {
-    const observer = new IntersectionObserver(
+    var observer = new IntersectionObserver(
       function (entries) {
         entries.forEach(function (entry) {
           if (entry.isIntersecting) {
@@ -75,7 +107,6 @@
       },
       { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
     );
-
     revealEls.forEach(function (el) {
       observer.observe(el);
     });
@@ -88,9 +119,9 @@
   /* ---------- Smooth Anchor Scroll ---------- */
   document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
     anchor.addEventListener("click", function (e) {
-      const id = anchor.getAttribute("href");
+      var id = anchor.getAttribute("href");
       if (!id || id === "#") return;
-      const target = document.querySelector(id);
+      var target = document.querySelector(id);
       if (!target) return;
       e.preventDefault();
       target.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -98,13 +129,13 @@
   });
 
   /* ---------- Contact Form ---------- */
-  const form = document.getElementById("contactForm");
+  var form = document.getElementById("contactForm");
   if (form) {
     form.addEventListener("submit", async function (e) {
       e.preventDefault();
-      const status = document.getElementById("formStatus");
-      const submitBtn = form.querySelector('[type="submit"]');
-      const formData = new FormData(form);
+      var status = document.getElementById("formStatus");
+      var submitBtn = form.querySelector('[type="submit"]');
+      var formData = new FormData(form);
 
       if (status) {
         status.className = "form-status";
@@ -113,22 +144,16 @@
       if (submitBtn) submitBtn.disabled = true;
 
       try {
-        const res = await fetch("../backend/contact.php", {
-          method: "POST",
-          body: formData,
-        });
-        const data = await res.json();
-
+        var data = await postForm(backendUrl("contact.php"), formData);
         if (status) {
           status.className = "form-status " + (data.success ? "success" : "error");
           status.textContent = data.message || (data.success ? "Sent!" : "Failed.");
         }
-
         if (data.success) form.reset();
       } catch (err) {
         if (status) {
           status.className = "form-status error";
-          status.textContent = "Network error. Please try again.";
+          status.textContent = err.message || "Network error. Please try again.";
         }
       } finally {
         if (submitBtn) submitBtn.disabled = false;
@@ -136,17 +161,20 @@
     });
   }
 
-  /* ---------- Service Quote Modal ---------- */
-  const quoteModal = document.getElementById("quoteModal");
-  const quoteForm = document.getElementById("quoteForm");
-  const quoteService = document.getElementById("quoteService");
-  const quoteServiceLabel = document.getElementById("quoteServiceLabel");
-  const quoteStatus = document.getElementById("quoteStatus");
-  const quoteSubmit = document.getElementById("quoteSubmit");
-  const quoteClose = document.getElementById("quoteModalClose");
+  /* ---------- Request Callback Modal ---------- */
+  var quoteModal = document.getElementById("quoteModal");
+  var quoteForm = document.getElementById("quoteForm");
+  var quoteService = document.getElementById("quoteService");
+  var quoteServiceLabel = document.getElementById("quoteServiceLabel");
+  var quoteStatus = document.getElementById("quoteStatus");
+  var quoteSubmit = document.getElementById("quoteSubmit");
+  var quoteClose = document.getElementById("quoteModalClose");
 
   function openQuoteModal(serviceName) {
-    if (!quoteModal) return;
+    if (!quoteModal) {
+      alert("Callback form missing. Please re-upload frontend/index.html and services.html");
+      return;
+    }
     if (quoteService) quoteService.value = serviceName;
     if (quoteServiceLabel) quoteServiceLabel.textContent = serviceName;
     if (quoteStatus) {
@@ -158,7 +186,7 @@
     quoteModal.classList.add("open");
     quoteModal.setAttribute("aria-hidden", "false");
     document.body.classList.add("modal-open");
-    const nameInput = document.getElementById("quoteName");
+    var nameInput = document.getElementById("quoteName");
     if (nameInput) setTimeout(function () { nameInput.focus(); }, 120);
     if (typeof lucide !== "undefined") lucide.createIcons();
   }
@@ -170,16 +198,20 @@
     document.body.classList.remove("modal-open");
   }
 
-  document.querySelectorAll(".btn-quote").forEach(function (btn) {
-    btn.addEventListener("click", function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      openQuoteModal(btn.getAttribute("data-service") || "General Inquiry");
-    });
+  // Event delegation — works even if buttons are re-rendered
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest(".btn-quote");
+    if (!btn) return;
+    e.preventDefault();
+    e.stopPropagation();
+    openQuoteModal(btn.getAttribute("data-service") || "General Inquiry");
   });
 
   if (quoteClose) {
-    quoteClose.addEventListener("click", closeQuoteModal);
+    quoteClose.addEventListener("click", function (e) {
+      e.preventDefault();
+      closeQuoteModal();
+    });
   }
 
   if (quoteModal) {
@@ -198,10 +230,10 @@
     quoteForm.addEventListener("submit", async function (e) {
       e.preventDefault();
 
-      const name = (document.getElementById("quoteName") || {}).value || "";
-      const email = (document.getElementById("quoteEmail") || {}).value || "";
-      const phone = (document.getElementById("quotePhone") || {}).value || "";
-      const service = (quoteService && quoteService.value) || "";
+      var name = (document.getElementById("quoteName") || {}).value || "";
+      var email = (document.getElementById("quoteEmail") || {}).value || "";
+      var phone = (document.getElementById("quotePhone") || {}).value || "";
+      var service = (quoteService && quoteService.value) || "";
 
       if (!name.trim() || !email.trim() || !phone.trim() || !service.trim()) {
         if (quoteStatus) {
@@ -219,7 +251,7 @@
         return;
       }
 
-      const phoneDigits = phone.replace(/[\s\-()]/g, "");
+      var phoneDigits = phone.replace(/[\s\-()]/g, "");
       if (!/^\+?[0-9]{10,15}$/.test(phoneDigits)) {
         if (quoteStatus) {
           quoteStatus.className = "form-status error";
@@ -238,24 +270,9 @@
       }
 
       try {
-        const formData = new FormData(quoteForm);
+        var formData = new FormData(quoteForm);
         formData.set("service", service);
-
-        const res = await fetch("../backend/service-request.php", {
-          method: "POST",
-          body: formData,
-          headers: { Accept: "application/json" },
-        });
-
-        const raw = await res.text();
-        let data;
-        try {
-          data = JSON.parse(raw);
-        } catch (parseErr) {
-          throw new Error(
-            "Server did not return JSON. Start the site with start-server.bat (PHP), not a static file open."
-          );
-        }
+        var data = await postForm(backendUrl("service-request.php"), formData);
 
         if (quoteStatus) {
           quoteStatus.className = "form-status " + (data.success ? "success" : "error");
@@ -284,6 +301,8 @@
 
   /* ---------- Lucide Icons ---------- */
   if (typeof lucide !== "undefined") {
-    lucide.createIcons();
+    try {
+      lucide.createIcons();
+    } catch (e) {}
   }
 })();

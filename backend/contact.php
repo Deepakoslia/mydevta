@@ -1,52 +1,43 @@
 <?php
 /**
- * Contact form handler — stores validated submissions in MySQL
+ * Contact form handler
  */
 
-header('Content-Type: application/json; charset=utf-8');
-header('X-Content-Type-Options: nosniff');
+error_reporting(E_ALL);
+ini_set('display_errors', '0');
+ini_set('log_errors', '1');
 
+require_once __DIR__ . '/helpers.php';
 require_once __DIR__ . '/config.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo json_encode(['success' => false, 'message' => 'Method not allowed.']);
-    exit;
+    json_response(['success' => false, 'message' => 'Method not allowed.'], 405);
 }
 
-// Honeypot anti-spam
 if (!empty($_POST['website'])) {
-    echo json_encode(['success' => true, 'message' => 'Thank you! We will contact you soon.']);
-    exit;
+    json_response(['success' => true, 'message' => 'Thank you! We will contact you soon.']);
 }
 
-$name    = trim($_POST['name'] ?? '');
-$email   = trim($_POST['email'] ?? '');
-$message = trim($_POST['message'] ?? '');
+$name    = clean_text($_POST['name'] ?? '');
+$email   = clean_text($_POST['email'] ?? '');
+$message = clean_text($_POST['message'] ?? '');
 
 $errors = [];
 
-if ($name === '' || mb_strlen($name) < 2 || mb_strlen($name) > 100) {
+if ($name === '' || str_len($name) < 2 || str_len($name) > 100) {
     $errors[] = 'Please enter a valid name (2–100 characters).';
 }
 
-if (!filter_var($email, FILTER_VALIDATE_EMAIL) || mb_strlen($email) > 150) {
+if (!filter_var($email, FILTER_VALIDATE_EMAIL) || str_len($email) > 150) {
     $errors[] = 'Please enter a valid email address.';
 }
 
-if ($message === '' || mb_strlen($message) < 10 || mb_strlen($message) > 2000) {
+if ($message === '' || str_len($message) < 10 || str_len($message) > 2000) {
     $errors[] = 'Please enter a message (10–2000 characters).';
 }
 
-// Basic sanitization (strip tags)
-$name    = strip_tags($name);
-$email   = filter_var($email, FILTER_SANITIZE_EMAIL);
-$message = strip_tags($message);
-
 if (!empty($errors)) {
-    http_response_code(422);
-    echo json_encode(['success' => false, 'message' => implode(' ', $errors)]);
-    exit;
+    json_response(['success' => false, 'message' => implode(' ', $errors)], 422);
 }
 
 try {
@@ -60,14 +51,13 @@ try {
         ':message' => $message,
     ]);
 
-    echo json_encode([
+    json_response([
         'success' => true,
         'message' => 'Thank you! Your message has been sent successfully.',
     ]);
-} catch (PDOException $e) {
-    http_response_code(500);
-    echo json_encode([
+} catch (Throwable $e) {
+    json_response([
         'success' => false,
-        'message' => 'Something went wrong. Please try again later.',
-    ]);
+        'message' => 'Server error. Please check database settings in backend/config.php.',
+    ], 500);
 }

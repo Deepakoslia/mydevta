@@ -1,29 +1,28 @@
 <?php
 /**
- * Service quote request handler — stores validated submissions in MySQL
+ * Service callback request handler
  */
 
-header('Content-Type: application/json; charset=utf-8');
-header('X-Content-Type-Options: nosniff');
+error_reporting(E_ALL);
+ini_set('display_errors', '0');
+ini_set('log_errors', '1');
 
+require_once __DIR__ . '/helpers.php';
 require_once __DIR__ . '/config.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo json_encode(['success' => false, 'message' => 'Method not allowed.']);
-    exit;
+    json_response(['success' => false, 'message' => 'Method not allowed.'], 405);
 }
 
 // Honeypot anti-spam
 if (!empty($_POST['website'])) {
-    echo json_encode(['success' => true, 'message' => 'Thank you! We will contact you soon.']);
-    exit;
+    json_response(['success' => true, 'message' => 'Thank you! We will contact you soon.']);
 }
 
-$name    = trim($_POST['name'] ?? '');
-$email   = trim($_POST['email'] ?? '');
-$phone   = trim($_POST['phone'] ?? '');
-$service = trim($_POST['service'] ?? '');
+$name    = clean_text($_POST['name'] ?? '');
+$email   = clean_text($_POST['email'] ?? '');
+$phone   = clean_text($_POST['phone'] ?? '');
+$service = clean_text($_POST['service'] ?? '');
 
 $allowedServices = [
     'Marketing & Branding',
@@ -40,16 +39,15 @@ $allowedServices = [
 
 $errors = [];
 
-if ($name === '' || mb_strlen($name) < 2 || mb_strlen($name) > 100) {
+if ($name === '' || str_len($name) < 2 || str_len($name) > 100) {
     $errors[] = 'Please enter a valid name (2–100 characters).';
 }
 
-if (!filter_var($email, FILTER_VALIDATE_EMAIL) || mb_strlen($email) > 150) {
+if (!filter_var($email, FILTER_VALIDATE_EMAIL) || str_len($email) > 150) {
     $errors[] = 'Please enter a valid email address.';
 }
 
-// Indian / international phone: 10–15 digits, optional + and spaces
-$phoneDigits = preg_replace('/[\s\-\(\)]+/', '', $phone);
+$phoneDigits = preg_replace('/[\s\-\(\)]+/', '', $phone) ?? '';
 if ($phone === '' || !preg_match('/^\+?[0-9]{10,15}$/', $phoneDigits)) {
     $errors[] = 'Please enter a valid phone number (10–15 digits).';
 }
@@ -58,15 +56,8 @@ if ($service === '' || !in_array($service, $allowedServices, true)) {
     $errors[] = 'Please select a valid service.';
 }
 
-$name    = strip_tags($name);
-$email   = filter_var($email, FILTER_SANITIZE_EMAIL);
-$phone   = strip_tags($phoneDigits);
-$service = strip_tags($service);
-
 if (!empty($errors)) {
-    http_response_code(422);
-    echo json_encode(['success' => false, 'message' => implode(' ', $errors)]);
-    exit;
+    json_response(['success' => false, 'message' => implode(' ', $errors)], 422);
 }
 
 try {
@@ -78,18 +69,17 @@ try {
     $stmt->execute([
         ':name'    => $name,
         ':email'   => $email,
-        ':phone'   => $phone,
+        ':phone'   => $phoneDigits,
         ':service' => $service,
     ]);
 
-    echo json_encode([
+    json_response([
         'success' => true,
         'message' => 'Thank you! Your callback request has been submitted. We will contact you soon.',
     ]);
-} catch (PDOException $e) {
-    http_response_code(500);
-    echo json_encode([
+} catch (Throwable $e) {
+    json_response([
         'success' => false,
-        'message' => 'Something went wrong. Please try again later.',
-    ]);
+        'message' => 'Server error. Please check database settings in backend/config.php.',
+    ], 500);
 }

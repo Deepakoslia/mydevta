@@ -21,12 +21,18 @@ AddDefaultCharset UTF-8
   AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json
 </IfModule>
 
-# Browser caching for static assets
+# Browser caching for static assets (short JS/CSS cache so updates show on Hostinger)
 <IfModule mod_expires.c>
   ExpiresActive On
-  ExpiresByType text/css "access plus 7 days"
-  ExpiresByType application/javascript "access plus 7 days"
+  ExpiresByType text/css "access plus 1 hours"
+  ExpiresByType application/javascript "access plus 1 hours"
   ExpiresByType image/svg+xml "access plus 30 days"
   ExpiresByType image/png "access plus 30 days"
   ExpiresByType image/webp "access plus 30 days"
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(js|css)$">
+    Header set Cache-Control "max-age=3600, must-revalidate"
+  </FilesMatch>
 </IfModule>

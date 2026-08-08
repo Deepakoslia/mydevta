@@ -2,15 +2,20 @@
 /**
  * Database configuration for DEVTA
  *
- * Local (this PC): uses SQLite automatically if MySQL login fails.
- * Hostinger: set DB_* below to your MySQL credentials (and DB_DRIVER to 'mysql').
+ * HOSTINGER (important):
+ * 1. hPanel → MySQL Databases → create DB + user
+ * 2. Import database/schema.sql (or service_requests.sql)
+ * 3. Put your credentials below (example: u123456789_mydevta)
+ * 4. Test: https://yourdomain.com/backend/ping.php
+ *
+ * Local PC: SQLite is used automatically if MySQL login fails.
  */
 
 define('DB_DRIVER', 'auto'); // 'auto' | 'mysql' | 'sqlite'
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'mydevta');
-define('DB_USER', 'root');
-define('DB_PASS', ''); // set your MySQL password if using MySQL
+define('DB_NAME', 'mydevta');          // Hostinger: uXXXX_mydevta
+define('DB_USER', 'root');             // Hostinger: uXXXX_user
+define('DB_PASS', '');                 // Hostinger: your DB password
 define('DB_CHARSET', 'utf8mb4');
 define('DB_SQLITE_PATH', dirname(__DIR__) . DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'mydevta.sqlite');
 
@@ -128,14 +133,13 @@ function getDB(): PDO
             } catch (PDOException $e2) {
                 $mysqlError = $e2->getMessage();
                 if ($driver === 'mysql') {
-                    http_response_code(500);
-                    die(json_encode(['success' => false, 'message' => 'Database connection failed.']));
+                    throw new PDOException('MySQL connection failed. Update backend/config.php with Hostinger DB credentials.');
                 }
             }
         }
     }
 
-    // SQLite fallback (local development)
+    // SQLite fallback (local / when MySQL credentials are not set yet)
     try {
         $dir = dirname(DB_SQLITE_PATH);
         if (!is_dir($dir)) {
@@ -146,12 +150,11 @@ function getDB(): PDO
         ensureSchema($pdo);
         return $pdo;
     } catch (PDOException $e) {
-        http_response_code(500);
-        $msg = 'Database connection failed.';
+        $msg = 'Database connection failed. Set DB_HOST, DB_NAME, DB_USER, DB_PASS in backend/config.php (Hostinger MySQL).';
         if ($mysqlError) {
-            $msg .= ' MySQL: ' . $mysqlError;
+            $msg .= ' MySQL error: ' . $mysqlError;
         }
-        die(json_encode(['success' => false, 'message' => $msg]));
+        throw new PDOException($msg);
     }
 }
 
