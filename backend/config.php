@@ -36,9 +36,32 @@ if (!defined('DB_SQLITE_PATH')) {
     );
 }
 
-// Callback / contact alerts go here
+// Optional mail settings (created by setup-mail.php)
+$mailConfig = __DIR__ . '/config.mail.php';
+if (is_file($mailConfig)) {
+    require_once $mailConfig;
+}
+
 if (!defined('NOTIFY_EMAIL')) {
     define('NOTIFY_EMAIL', 'devtaknowledge@gmail.com');
+}
+if (!defined('SMTP_HOST')) {
+    define('SMTP_HOST', '');
+}
+if (!defined('SMTP_PORT')) {
+    define('SMTP_PORT', 587);
+}
+if (!defined('SMTP_USER')) {
+    define('SMTP_USER', '');
+}
+if (!defined('SMTP_PASS')) {
+    define('SMTP_PASS', '');
+}
+if (!defined('SMTP_SECURE')) {
+    define('SMTP_SECURE', 'tls');
+}
+if (!defined('SMTP_FROM')) {
+    define('SMTP_FROM', '');
 }
 
 ini_set('session.cookie_httponly', 1);

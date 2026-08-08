@@ -1,5 +1,5 @@
 # Allow API endpoints; block credential files
-<FilesMatch "^(config|config\.local|auth|helpers)\.php$">
+<FilesMatch "^(config|config\.local|config\.mail|auth|helpers|smtp)\.php$">
   <IfModule mod_authz_core.c>
     Require all denied
   </IfModule>

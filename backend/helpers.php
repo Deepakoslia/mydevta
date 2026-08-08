@@ -1,7 +1,9 @@
 <?php
 /**
- * Shared helpers for API endpoints (Hostinger-safe)
+ * Shared helpers
  */
+
+require_once __DIR__ . '/smtp.php';
 
 function str_len(string $value): int
 {
@@ -29,16 +31,19 @@ function clean_text(string $value): string
 }
 
 /**
- * Notify admin by email (Hostinger mail() usually works)
+ * Short alert: "kisi ne detail fill ki"
  */
-function notify_admin(string $subject, string $body): void
+function notify_admin(string $subject, string $bodyText, ?string $replyTo = null): void
 {
     $to = defined('NOTIFY_EMAIL') ? NOTIFY_EMAIL : 'devtaknowledge@gmail.com';
-    $headers = [
-        'MIME-Version: 1.0',
-        'Content-type: text/plain; charset=UTF-8',
-        'From: DEVTA Website <noreply@' . ($_SERVER['HTTP_HOST'] ?? 'mydevta.com') . '>',
-        'X-Mailer: PHP/' . PHP_VERSION,
-    ];
-    @mail($to, '=?UTF-8?B?' . base64_encode($subject) . '?=', $body, implode("\r\n", $headers));
+
+    if (defined('SMTP_HOST') && SMTP_HOST !== '' && defined('SMTP_USER') && SMTP_USER !== '') {
+        smtp_send($to, $subject, $bodyText, $replyTo);
+        return;
+    }
+
+    // Fallback (may not work on some hosts)
+    $host = preg_replace('/^www\./', '', strtolower($_SERVER['HTTP_HOST'] ?? 'mydevta.com'));
+    $headers = "From: DEVTA <noreply@{$host}>\r\nContent-Type: text/plain; charset=UTF-8\r\n";
+    @mail($to, '=?UTF-8?B?' . base64_encode($subject) . '?=', $bodyText, $headers);
 }

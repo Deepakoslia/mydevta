@@ -14,7 +14,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     json_response(['success' => false, 'message' => 'Method not allowed.'], 405);
 }
 
-// Honeypot anti-spam
 if (!empty($_POST['website'])) {
     json_response(['success' => true, 'message' => 'Thank you! We will contact you soon.']);
 }
@@ -73,15 +72,17 @@ try {
         ':service' => $service,
     ]);
 
-    // Email so you know WHICH service was requested
+    // Short alert only
     notify_admin(
-        'DEVTA Callback: ' . $service,
-        "New Request Callback\n\n"
-        . "Service : {$service}\n"
-        . "Name    : {$name}\n"
-        . "Email   : {$email}\n"
-        . "Phone   : {$phoneDigits}\n"
-        . "Time    : " . date('Y-m-d H:i:s') . "\n"
+        'DEVTA: New callback request',
+        "Someone submitted a Request Callback form.\n\n"
+        . "Service: {$service}\n"
+        . "Name: {$name}\n"
+        . "Phone: {$phoneDigits}\n"
+        . "Email: {$email}\n"
+        . "Time: " . date('d M Y, h:i A') . "\n\n"
+        . "View details in the admin panel: /admin/\n",
+        $email
     );
 
     json_response([
@@ -91,6 +92,6 @@ try {
 } catch (Throwable $e) {
     json_response([
         'success' => false,
-        'message' => 'Database not connected. Open /install.php on Hostinger and set MySQL details. Error: ' . $e->getMessage(),
+        'message' => 'Database not connected. Open /install.php on Hostinger and set MySQL details.',
     ], 500);
 }

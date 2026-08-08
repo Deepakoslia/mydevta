@@ -52,12 +52,13 @@ try {
     ]);
 
     notify_admin(
-        'DEVTA Contact Message',
-        "New Contact Message\n\n"
-        . "Name    : {$name}\n"
-        . "Email   : {$email}\n"
-        . "Message : {$message}\n"
-        . "Time    : " . date('Y-m-d H:i:s') . "\n"
+        'DEVTA: New contact message',
+        "Someone submitted the Contact form.\n\n"
+        . "Name: {$name}\n"
+        . "Email: {$email}\n"
+        . "Time: " . date('d M Y, h:i A') . "\n\n"
+        . "View details in the admin panel: /admin/\n",
+        $email
     );
 
     json_response([
@@ -67,6 +68,6 @@ try {
 } catch (Throwable $e) {
     json_response([
         'success' => false,
-        'message' => 'Database not connected. Open /install.php on Hostinger and set MySQL details. Error: ' . $e->getMessage(),
+        'message' => 'Database not connected. Open /install.php on Hostinger and set MySQL details.',
     ], 500);
 }

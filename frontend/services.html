@@ -8,11 +8,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../assets/css/style.css?v=3" />
-  <link rel="stylesheet" href="../assets/css/logo.css?v=3" />
+  <link rel="stylesheet" href="../assets/css/style.css?v=4" />
+  <link rel="stylesheet" href="../assets/css/logo.css?v=4" />
 </head>
 <body>
   <div class="page-loader" aria-hidden="true"><div class="loader-ring"></div></div>
+  <script>
+    // Always hide loader even if CDN/JS fails
+    setTimeout(function () {
+      var el = document.querySelector('.page-loader');
+      if (el) el.classList.add('hidden');
+    }, 1200);
+  </script>
 
   <header class="navbar scrolled">
     <div class="nav-inner">
@@ -227,7 +234,7 @@
     </div>
   </div>
 
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-  <script src="../assets/js/main.js?v=3"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <script src="../assets/js/main.js?v=4"></script>
 </body>
 </html>
