@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../backend/auth.php';
 
 if (isLoggedIn()) {
-    header('Location: dashboard.php');
+    header('Location: quotes.php');
     exit;
 }
 
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Please enter username and password.';
     } elseif (attemptLogin($username, $password)) {
         $_SESSION['login_attempts'] = 0;
-        header('Location: dashboard.php');
+        header('Location: quotes.php');
         exit;
     } else {
         $_SESSION['login_attempts']++;
